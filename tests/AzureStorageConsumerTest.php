@@ -9,11 +9,11 @@ use Enqueue\AzureStorage\AzureStorageMessage;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use LogicException;
-use MicrosoftAzure\Storage\Queue\QueueRestProxy;
+use MicrosoftAzure\Storage\Queue\Models\CreateMessageResult;
 use MicrosoftAzure\Storage\Queue\Models\ListMessagesOptions;
 use MicrosoftAzure\Storage\Queue\Models\ListMessagesResult;
-use MicrosoftAzure\Storage\Queue\Models\CreateMessageResult;
 use MicrosoftAzure\Storage\Queue\Models\QueueMessage;
+use MicrosoftAzure\Storage\Queue\QueueRestProxy;
 
 class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,16 +27,18 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
     public function testCouldBeConstructedWithContextAndDestinationAndPreFetchCountAsArguments()
     {
         $restProxy = $this->createQueueRestProxyMock();
-        new AzureStorageConsumer(
+        $output = new AzureStorageConsumer(
             $restProxy,
             new AzureStorageDestination('aQueue'),
             new AzureStorageContext($restProxy)
         );
+
+        $this->assertNotNull($output);
     }
 
     public function testShouldReturnDestinationSetInConstructorOnGetQueue()
     {
-        $destination = new AzureStorageDestination('aQueue');
+        $destination = new AzureStorageDestination('aQ ueue');
         $restProxy = $this->createQueueRestProxyMock();
         $consumer = new AzureStorageConsumer($restProxy, $destination, new AzureStorageContext($restProxy));
 
@@ -52,16 +54,14 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         $listMessagesResultMock
             ->expects($this->any())
             ->method('getQueueMessages')
-            ->willReturn([])
-        ;
+            ->willReturn([]);
 
         $azureMock = $this->createQueueRestProxyMock();
         $azureMock
             ->expects($this->any())
             ->method('listMessages')
             ->with('aQueue', $options)
-            ->willReturn($listMessagesResultMock)
-        ;
+            ->willReturn($listMessagesResultMock);
 
         $consumer = new AzureStorageConsumer(
             $azureMock,
@@ -84,6 +84,7 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         );
 
         $consumer->acknowledge(new AzureStorageMessage());
+        $this->assertTrue(true);
     }
 
     public function testShouldDoNothingOnReject()
@@ -96,6 +97,7 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         );
 
         $consumer->reject(new AzureStorageMessage());
+        $this->assertTrue(true);
     }
 
     public function testShouldQueueMsgAgainReject()
@@ -109,28 +111,24 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         $listMessagesResultMock
             ->expects($this->any())
             ->method('getQueueMessages')
-            ->willReturn([$messageMock])
-        ;
+            ->willReturn([$messageMock]);
         $createMessageResultMock = $this->createMock(CreateMessageResult::class);
         $createMessageResultMock
             ->expects($this->any())
             ->method('getQueueMessage')
-            ->willReturn($messageMock)
-        ;
+            ->willReturn($messageMock);
 
         $azureMock = $this->createQueueRestProxyMock();
         $azureMock
             ->expects($this->any())
             ->method('listMessages')
             ->with('aQueue', $options)
-            ->willReturn($listMessagesResultMock)
-        ;
-         $azureMock
+            ->willReturn($listMessagesResultMock);
+        $azureMock
             ->expects($this->any())
             ->method('createMessage')
             ->with('aQueue', $messageMock->getMessageText())
-            ->willReturn($createMessageResultMock)
-        ;
+            ->willReturn($createMessageResultMock);
 
         $consumer = new AzureStorageConsumer(
             $azureMock,
@@ -157,16 +155,14 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         $listMessagesResultMock
             ->expects($this->any())
             ->method('getQueueMessages')
-            ->willReturn([$messageMock])
-        ;
+            ->willReturn([$messageMock]);
 
         $azureMock = $this->createQueueRestProxyMock();
         $azureMock
             ->expects($this->any())
             ->method('listMessages')
             ->with('aQueue', $options)
-            ->willReturn($listMessagesResultMock)
-        ;
+            ->willReturn($listMessagesResultMock);
 
         $consumer = new AzureStorageConsumer(
             $azureMock,
@@ -204,16 +200,14 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
         $listMessagesResultMock
             ->expects($this->any())
             ->method('getQueueMessages')
-            ->willReturn([$messageMock])
-        ;
+            ->willReturn([$messageMock]);
 
         $azureMock = $this->createQueueRestProxyMock();
         $azureMock
             ->expects($this->any())
             ->method('listMessages')
             ->with('aQueue', $options)
-            ->willReturn($listMessagesResultMock)
-        ;
+            ->willReturn($listMessagesResultMock);
 
         $consumer = new AzureStorageConsumer(
             $azureMock,
@@ -239,12 +233,7 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
      */
     private function createQueueMessageMock(?string $messageText = null)
     {
-        $insertionDateMock = $this->createMock(\DateTime::class);
-        $insertionDateMock
-            ->expects($this->any())
-            ->method('getTimestamp')
-            ->willReturn(1542809366);
-
+        $insertionDateMock = \DateTime::createFromFormat('U', 1542809366);
         $message = new AzureStorageMessage();
         $message->setBody('aBody');
         $messageText = $messageText ?? $message->getMessageText();
@@ -282,6 +271,7 @@ class AzureStorageConsumerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())
             ->method('getTimeNextVisible')
             ->willReturn('any');
+
         return $messageMock;
     }
 

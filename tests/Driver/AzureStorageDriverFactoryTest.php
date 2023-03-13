@@ -30,6 +30,6 @@ class AzureStorageDriverFactoryTest extends TestCase
         $this->assertCount(1, $drivers);
         $driverData = reset($drivers);
         $this->assertArrayHasKey('schemes', $driverData);
-        $this->assertArraySubset(['azure'], $driverData['schemes']);
+        $this->assertEquals(['azure'], $driverData['schemes']);
     }
 }

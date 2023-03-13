@@ -119,11 +119,7 @@ class AzureStorageProducerTest extends TestCase
      */
     private function createQueueMessageMock()
     {
-        $insertionDateMock = $this->createMock(\DateTime::class);
-        $insertionDateMock
-            ->expects($this->any())
-            ->method('getTimestamp')
-            ->willReturn(1542809366);
+        $insertionDateMock = \DateTime::createFromFormat('U', 1542809366);
 
         $messageMock = $this->createMock(QueueMessage::class);
         $messageMock

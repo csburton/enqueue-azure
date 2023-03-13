@@ -2,20 +2,20 @@
 
 namespace Enqueue\AzureStorage\Tests;
 
-use Enqueue\Null\NullQueue;
-use Enqueue\Null\NullTopic;
 use Enqueue\AzureStorage\AzureStorageConsumer;
 use Enqueue\AzureStorage\AzureStorageContext;
 use Enqueue\AzureStorage\AzureStorageDestination;
 use Enqueue\AzureStorage\AzureStorageProducer;
+use Enqueue\Null\NullQueue;
+use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Exception;
-use Interop\Queue\Exception\PurgeQueueNotSupportedException;
-use Interop\Queue\Message;
 use Interop\Queue\Exception\InvalidDestinationException;
-use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Exception\PurgeQueueNotSupportedException;
 use Interop\Queue\Exception\SubscriptionConsumerNotSupportedException;
+use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use Interop\Queue\Message;
 use Interop\Queue\Queue;
 use MicrosoftAzure\Storage\Queue\QueueRestProxy;
 use PHPUnit\Framework\TestCase;
@@ -255,5 +255,6 @@ class AzureStorageContextTest extends TestCase
         // Close actually does nothing yet, so we just test, that it did not fail when called.
         $context = new AzureStorageContext($this->createQueueRestProxyMock());
         $context->close();
+        $this->assertTrue(true);
     }
 }

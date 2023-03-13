@@ -59,45 +59,42 @@ class AzureStorageConnectionFactoryTest extends TestCase
     /**
      * Test for configuration transformation exception - empty.
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Configuration cannot be empty.
      */
     public function testTransformConfigurationExceptionEmpty(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Configuration cannot be empty.');
         AzureStorageConnectionFactory::transformConfiguration(null);
     }
 
     /**
      * Test for configuration transformation exception - empty.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Configuration cannot be empty.
      */
     public function testTransformConfigurationExceptionEmpty2(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Configuration cannot be empty.');
         AzureStorageConnectionFactory::transformConfiguration('azure:');
     }
 
     /**
      * Test for configuration transformation exception - empty.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Array config has to contain non empty "connection_string" key.
      */
     public function testTransformConfigurationExceptionEmptyConnectionString(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Array config has to contain non empty "connection_string" key.');
         $config = ['connection_string'];
         AzureStorageConnectionFactory::transformConfiguration($config);
     }
 
     /**
      * Test for configuration transformation exception - empty.
-     *
-     * @expectedException LogicException
-     * @expectedExceptionMessage The DSN is invalid. Scheme contains illegal symbols.
      */
     public function testTransformConfigurationInvalidDsn(): void
     {
+        $this->expectExceptionMessage("The DSN is invalid. Scheme contains illegal symbols.");
+        $this->expectException(LogicException::class);
         $config = 'az@ure:o';
         AzureStorageConnectionFactory::transformConfiguration($config);
     }
